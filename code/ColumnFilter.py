@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import os
-import random
 import google.generativeai as genai
 
 class ColumnFilter:
@@ -9,47 +8,31 @@ class ColumnFilter:
             self, 
             folder:str,
             dfs:list[str],
-            target_tables:dict,
+            target_tables:dict[str, list[str]],
             api_key:str, 
             model=genai.GenerativeModel("gemini-pro")
         ):
         genai.configure(api_key=api_key)
+        self.__api_key = api_key
         self.df_names = dfs
-        self.__folder_name = folder,
+        self.__folder_name = folder
         self.__dfs = {name: pd.read_csv(f'cleaned_data/{folder}/{name}') for name in dfs}
         self.df_count = len(dfs)
         self.model = model
         self.__target_tables = target_tables
     
     # Retrieve column names of the table
-    def get_cols(self) -> dict:
-        samples = {}
+    def get_cols(self) -> pd.DataFrame:
+        c_names = []
+        df_names = []
         for df_name, df in self.__dfs.items():
             lists = df.columns.tolist()
-
-            # Grab sample data for detection
-            for c_name in lists:
-                raw_sample_data = df[c_name].sample(n=10)
-                sample_data = []
-
-                # Mask sensitive information
-                if 'address' in c_name.lower() or 'phone' in c_name.lower() or 'mail' in c_name.lower():
-                    for s_data in raw_sample_data:
-                        # Randomly select 8 unique indices
-                        indices_to_mask = random.sample(range(len(s_data)), 10)
-                        str_list = list(s_data)
-                        # Replace selected indices with 'x'
-                        for idx in indices_to_mask:
-                            str_list[idx] = 'x'
-                        sample_data.append(''.join(str_list))
-                else:
-                    sample_data = raw_sample_data.tolist()
-
-                samples[c_name] = str(sample_data)
-        return samples
+            c_names += lists
+            df_names += [df_name] * len(lists)
+        return pd.DataFrame({'colname':c_names, 'dfname':df_names})
     
     # Quick selection of the columns (based on word similarity)
-    def similarity_match(self, colnames:list[str])->dict:
+    def similarity_match(self, colnames:list[str])->dict[str, list[str]]:
         matched_cols = {}
 
         for df, cols in self.__target_tables.items():
@@ -70,16 +53,19 @@ class ColumnFilter:
                 if flag:
                     col_rst.append(c)
                 else:
-                    col_rst.append(f'{std_c}_null')
+                    if 'id' in std_c_:
+                        col_rst.append(f'{std_c}_idnull')
+                    else:
+                        col_rst.append(f'{std_c}_null')
 
             matched_cols[df] = col_rst
         return matched_cols
     
     # Output the filtered data
     def __store_tables(self, tables:dict[str, pd.DataFrame]):
-        os.makedirs(f'filtered_data/{self.__folder_name[0]}_filtered', exist_ok=True)
+        os.makedirs(f'filtered_data/{self.__folder_name}_filtered', exist_ok=True)
         for tb_name, tb in tables.items():
-            tb.to_csv(f'filtered_data/{self.__folder_name[0]}_filtered/'+tb_name+'.csv')
+            tb.to_csv(f'filtered_data/{self.__folder_name}_filtered/'+tb_name+'.csv')
 
     # Change dictionary into dataframe
     def __dict_to_df(self, dictionary:dict[str, pd.DataFrame])->pd.DataFrame:
@@ -93,25 +79,38 @@ class ColumnFilter:
     # Filter data
     def filter_cols(self, local:bool=True):
         result_set = {}
-        samples = self.get_cols()
-        selected = self.similarity_match(list(samples.keys()))
-
-        # Label the columns
-        col_df = {}
-        for dfn, data in self.__dfs.items():
-            for c_name in data.columns:
-                if c_name not in col_df.keys():
-                    col_df[c_name] = dfn
+        colndf = self.get_cols()
+        selected = self.similarity_match(colndf['colname'].unique().tolist())
 
         for sel_df, sel_col in selected.items():
             filtered_cols = pd.DataFrame([])
+            marker = False
+
             for i in range(len(sel_col)):
                 col = sel_col[i]
                 std_col = self.__target_tables[sel_df][i]
-                if 'null' in col:
-                    filtered_cols[col[:-5]] = np.nan
+                if '_null' in col:
+                    filtered_cols[col[:-5]] = None
+                elif '_idnull' in col:
+                    other_not_null = [s for s in selected[col[:-9]] if "null" not in s]
+                    # Implement marker (related dataframe) if not yet
+                    if not marker:
+                        marker = colndf.loc[colndf['colname'].isin(other_not_null), 'dfname'].iloc[0]
+                    filtered_cols[col[:-7]] = self.__dfs[marker][other_not_null].apply(tuple, axis=1).factorize()[0]
                 else:
-                    filtered_cols[std_col] = self.__dfs[col_df[col]][col]
+                    # Match column length
+                    if len(filtered_cols) == 0:
+                        marker = colndf.loc[colndf['colname']==col, 'dfname'].iloc[0]
+
+                    filtered_cols[std_col] = self.__dfs[marker][col]
+
+            # Check duplication
+            filtered_cols.drop_duplicates(inplace=True)
+
+            # Fill id column
+            if filtered_cols.iloc[:, 0].isna().all():
+                filtered_cols.iloc[:, 0] = filtered_cols.index
+
             result_set[sel_df] = filtered_cols
 
         if local:

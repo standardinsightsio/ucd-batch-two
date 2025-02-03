@@ -1,13 +1,12 @@
 from MySQLLoader import MySQLLoader
 import os
 import pandas as pd
-from DataCleaner import DataCleaner
 
 # Retrieve my password
 with open('MySQL_password.txt', 'r') as file:
     pwd = file.readline().strip()
 
-ml = MySQLLoader('root', pwd, 'marketdata')
+ml = MySQLLoader('yuxuan', pwd, 'marketdata', host='172.233.137.237')
 
 # Create tables
 target_tables = {
@@ -25,17 +24,17 @@ target_tables = {
 }
 
 data_types = {
-    'Customer':['CHAR(8)', 'VARCHAR(20)', 'VARCHAR(20)', 'VARCHAR(50)', 'VARCHAR(20)', 'VARCHAR(100)', 'CHAR(2)', 
-                'VARCHAR(20)', 'INT', 'VARCHAR(6)', 'VARCHAR(20)', 'VARCHAR(20)'],
+    'Customer':['CHAR(8)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 
+                'CHAR(2)', 'VARCHAR(100)', 'INT', 'VARCHAR(15)', 'VARCHAR(100)', 'VARCHAR(20)'],
     '`Order`':['CHAR(10)', 'CHAR(8)', 'DATE'],
     'Sales':['CHAR(8)', 'DATETIME', 'TIME', 'CHAR(8)', 
              'VARCHAR(20)', 'INT', 'INT', 'Char(8)', 'CHAR(8)'],
     'Purchase':['CHAR(10)', 'CHAR(8)', 'DATETIME', 'INT', 
                 'DECIMAL(8,2)', 'VARCHAR(50)', 'VARCHAR(100)'],
-    'Product':['CHAR(8)', 'VARCHAR(50)', 'CHAR(12)', 'DECIMAL(8,2)', 'DECIMAL(8,2)', 'VARCHAR(10)', 
-               'VARCHAR(10)'],
-    'Category':['VARCHAR(10)', 'VARCHAR(10)'],
-    'Brand':['VARCHAR(10)', 'VARCHAR(10)']
+    'Product':['CHAR(8)', 'VARCHAR(50)', 'CHAR(12)', 'DECIMAL(8,2)', 'DECIMAL(8,2)', 'INT', 
+               'INT'],
+    'Category':['INT', 'VARCHAR(20)'],
+    'Brand':['INT', 'VARCHAR(20)']
 }
 
 primary_keys = {
@@ -48,27 +47,39 @@ primary_keys = {
     'Brand':['BrandId']
 }
 
-'''
-cus = pd.read_csv("filtered_data/('fashion_store_data_cleaned',)_filtered/Customer.csv", index_col=0)
-print('Customer' in target_tables.keys())
-'''
+fk = {
+    'Customer':{},
+    '`Order`':{'CustomerId':'Customer'},
+    'Sales':{'CustomerId':'Customer', 'ProductId':'Product'},
+    'Purchase':{'ProductId':'Product'},
+    'Product':{'BrandId':'Brand', 
+               'CategoryId':'Category'},
+    'Category':{},
+    'Brand':{}
+}
 
-flag = True
-if flag:
-    for tb, col in target_tables.items():
-        # Create empty table
-        query = ml.create_table(tb, col, data_types[tb], primary_keys[tb], {})
-        ml.execute_query(query)
 
-        # Upload data
-        if tb[0] == '`':
-            tb = tb[1:-1]
-        table_resource = pd.read_csv(
-            f"filtered_data/('fashion_store_data_cleaned',)_filtered/{tb}.csv", 
-            index_col=0
-        )
-        query = ml.upload_data(tb, col)
-        for _, row in table_resource.iterrows():
-            ml.execute_query(query, tuple(row), 'upload')
+## --- Main Function ---
+# Sort creation order to prioritize root tables
+sorted_tables = ['Customer', 'Category', 'Brand', '`Order`', 'Product', 'Purchase', 'Sales']
 
-    ml.close_connect()
+for tb in sorted_tables:
+    # Create empty table
+    query = ml.create_table(tb, target_tables[tb], data_types[tb], primary_keys[tb], fk[tb])
+    ml.execute_query(tb, query)
+
+    # Upload data
+    if tb[0] == '`':
+        tb_name = tb[1:-1]
+    else:
+        tb_name = tb
+
+    table_resource = pd.read_csv(
+        f"filtered_data/fashion_store_data_cleaned_filtered/{tb_name}.csv", 
+        index_col=0
+    )
+    query = ml.upload_data(tb, target_tables[tb])
+    tuple_list = [tuple(None if pd.isna(x) else x for x in row) for row in table_resource.itertuples(index=False, name=None)]
+    ml.execute_query(tb, query, tuple_list, 'upload')
+
+ml.close_connect()

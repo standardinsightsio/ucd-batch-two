@@ -1,5 +1,7 @@
 import os
 from ColumnFilter import ColumnFilter
+import warnings
+warnings.filterwarnings('ignore')
 
 # Retrieve my API
 with open('gemini_api.txt', 'r') as file:
@@ -10,6 +12,7 @@ for subdir, _, files in os.walk('cleaned_data'):
     folder_name = os.path.basename(subdir)
     if len(files) == 0:
         continue
+    
     cf = ColumnFilter(
         folder = folder_name,
         dfs=files, 

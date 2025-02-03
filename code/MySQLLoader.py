@@ -22,7 +22,7 @@ class MySQLLoader:
                            columns:list[str], 
                            datatypes:list[str], 
                            primary_key:list[str], 
-                           foreign_keys:dict)->str:
+                           foreign_keys:dict[str, str])->str:
         if len(columns) != len(datatypes):
             print('\n========\nColumns and datatypes are mismatched!\n========')
         
@@ -37,22 +37,25 @@ class MySQLLoader:
         # Add foreign key references
         if foreign_keys:
             for fk, ftb in foreign_keys.items():
-                query += f',\n\tFOREIGN KEY ({fk}) REFERENCES {ftb}({fk}),'
+                query += f',\n\tFOREIGN KEY ({fk}) REFERENCES {ftb}({fk})'
         query += '\n)'
         return query
 
     # Function for data upload
     def upload_data(self, table:str, columns:list[str])->str:
-        query = f"INSERT IGNORE INTO {table} ({', '.join(columns)}) VALUES ({', '.join(['%s']*len(columns))})"
+        query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({', '.join(['%s']*len(columns))})"
         return query
         
     # Function for query execution
-    def execute_query(self, query:str, data_row:tuple=None, execution_type:str='create'):
+    def execute_query(self, tb_name:str, query:str, data_row:list[tuple]=None, execution_type:str='create'):
         # Execute queries
         if execution_type == 'create':
             self.__cursor.execute(query)
         elif execution_type == 'upload':
-            self.__cursor.execute(query, data_row)
+            # Check duplication
+            self.__cursor.execute(f"SELECT COUNT(*) FROM {tb_name}")
+            if self.__cursor.fetchone()[0] == 0:
+                self.__cursor.executemany(query, data_row)
         self.__connection.commit()
 
     # Function for closing connection

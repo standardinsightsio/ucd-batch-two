@@ -63,7 +63,7 @@ class DataCleaner:
         return self
 
     # Deal with duplicated values
-    def handle_duplicates(self, column: list[str] = None):
+    def handle_duplicates(self, column:list[str]=None):
         self.df = self.df.drop_duplicates(subset=column) if column else self.df.drop_duplicates()
         return self
 
