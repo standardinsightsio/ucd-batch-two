@@ -1,5 +1,4 @@
 import mysql.connector
-import pandas as pd
 
 ## Package for data loading (python to MySQL)
 class MySQLLoader:

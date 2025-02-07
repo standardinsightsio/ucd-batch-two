@@ -1,14 +1,12 @@
 import pandas as pd
 import os
 from typing import Literal
-import google.generativeai as genai
+
 
 class DataCleaner:
-    def __init__(self, df:pd.DataFrame, api_key:str, model=genai.GenerativeModel("gemini-pro")):
+    def __init__(self, df: pd.DataFrame):
         self.df = df
         self.length = len(df)
-        genai.configure(api_key=api_key)
-        self.model = model
 
     # Generate the prompt for value break
     def __gen_prompt(self, val:str) -> str:
@@ -63,7 +61,7 @@ class DataCleaner:
         return self
 
     # Deal with duplicated values
-    def handle_duplicates(self, column:list[str]=None):
+    def handle_duplicates(self, column: list[str] = None):
         self.df = self.df.drop_duplicates(subset=column) if column else self.df.drop_duplicates()
         return self
 

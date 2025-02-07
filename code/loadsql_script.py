@@ -1,5 +1,4 @@
 from MySQLLoader import MySQLLoader
-import os
 import pandas as pd
 
 # Retrieve my password
@@ -75,7 +74,7 @@ for tb in sorted_tables:
         tb_name = tb
 
     table_resource = pd.read_csv(
-        f"filtered_data/fashion_store_data_cleaned_filtered/{tb_name}.csv", 
+        f"filtered_data/{tb_name}_filtered.csv",
         index_col=0
     )
     query = ml.upload_data(tb, target_tables[tb])
