@@ -23,14 +23,14 @@ target_tables = {
 }
 
 data_types = {
-    'Customer':['CHAR(8)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 
+    'Customer':['VARCHAR(25)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 'VARCHAR(100)', 
                 'CHAR(2)', 'VARCHAR(100)', 'INT', 'VARCHAR(15)', 'VARCHAR(100)', 'VARCHAR(20)'],
-    '`Order`':['CHAR(10)', 'CHAR(8)', 'DATE'],
-    'Sales':['CHAR(8)', 'DATETIME', 'TIME', 'CHAR(8)', 
-             'VARCHAR(20)', 'INT', 'INT', 'Char(8)', 'CHAR(8)'],
-    'Purchase':['CHAR(10)', 'CHAR(8)', 'DATETIME', 'INT', 
+    '`Order`':['VARCHAR(25)', 'VARCHAR(25)', 'DATE'],
+    'Sales':['VARCHAR(25)', 'DATETIME', 'TIME', 'CHAR(8)', 
+             'VARCHAR(20)', 'INT', 'INT', 'VARCHAR(25)', 'VARCHAR(25)'],
+    'Purchase':['VARCHAR(25)', 'VARCHAR(25)', 'DATETIME', 'INT', 
                 'DECIMAL(8,2)', 'VARCHAR(50)', 'VARCHAR(100)'],
-    'Product':['CHAR(8)', 'VARCHAR(50)', 'CHAR(12)', 'DECIMAL(8,2)', 'DECIMAL(8,2)', 'INT', 
+    'Product':['VARCHAR(25)', 'VARCHAR(50)', 'CHAR(12)', 'DECIMAL(8,2)', 'DECIMAL(8,2)', 'INT', 
                'INT'],
     'Category':['INT', 'VARCHAR(20)'],
     'Brand':['INT', 'VARCHAR(20)']

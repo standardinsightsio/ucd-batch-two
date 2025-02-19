@@ -8,13 +8,16 @@ class MySQLLoader:
                 host=host,
                 port=port,
                 user=user,
-                password=password,
-                database=base_name
+                password=password
             )
             self.__cursor = self.__connection.cursor()
             print('\n========\nMySQL connected.\n========')
         except mysql.connector.Error as e:
             print(f"Error: {e}")
+
+        # Create schema if needed and get access to it
+        self.__cursor.execute(f"CREATE DATABASE IF NOT EXISTS {base_name}")
+        self.__cursor.execute(f"USE {base_name}")
     
     # Function for table creation
     def create_table(self, table_name:str, 
