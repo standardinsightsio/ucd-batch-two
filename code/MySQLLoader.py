@@ -11,7 +11,7 @@ class MySQLLoader:
                 database=base_name
             )
             self.__cursor = self.__connection.cursor()
-            print('✅ MySQL connected.')
+            print('MySQL connected.')
         except mysql.connector.Error as e:
             print(f"Error: {e}")
             sys.exit(1)
@@ -58,5 +58,5 @@ class MySQLLoader:
     def close_connect(self):
         self.__cursor.close()
         self.__connection.close()
-        print('✅ MySQL connection closed.')
+        print('MySQL connection closed.')
 
