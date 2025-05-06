@@ -1,42 +1,30 @@
 import os
 import sys
-import pandas as pd
 from ColumnFilter import ColumnFilter
-
-# Make sure flask is in the path
+'''
+# Ensure a file path is provided
 if len(sys.argv) < 2:
-    print(" No file path provided.")
+    print("No file path provided.")
     sys.exit(1)
 
-# Make sure it is compatible with Linux and Microsoft
+# Normalize file path (cross-platform)
 file_path = os.path.normpath(sys.argv[1])
-print(f"Try to  {file_path}")  # Debug 信息
+'''
 
-# Get file name
-folder_name = os.path.basename(file_path).replace("cleaned_", "").replace(".csv", "")
+def __list_csv_files(folder_path:str)->list[str]:
+    csv_files = [file for file in os.listdir(folder_path) if file.endswith('.csv')]
+    return csv_files
 
-# Make sure the filtered folder exsist
+file_path = "cleaned_data"
+print(f"Reading files from {file_path}...")
+
+# Extract folder name for filtered output
 FILTERED_FOLDER = "filtered_data"
 os.makedirs(FILTERED_FOLDER, exist_ok=True)
 
-# Read filtered file
-try:
-    df = pd.read_csv(file_path)
-    print(f"Successfully read: {file_path}")
-except Exception as e:
-    print(f"Fail to read {e}")
-    sys.exit(1)
-
-try:
-    filtered_file_path = os.path.join(FILTERED_FOLDER, f"{folder_name}_filtered.csv")
-    df.to_csv(filtered_file_path, index=False)
-
-except Exception as e:
-    sys.exit(1)  # 退出，返回非零状态
-
-#
+# Initialize ColumnFilter with target table schema
 cf = ColumnFilter(
-    dfs=[os.path.basename(file_path)],
+    dfs=__list_csv_files(file_path),
     target_tables={
         'Customer':['CustomerId', 'FirstName', 'LastName', 'Email', 'Phone', 'Street', 'State',
                     'City', 'PostalCode', 'Gender', 'Occupation', 'IncomeLevel'],
@@ -52,10 +40,12 @@ cf = ColumnFilter(
     },
 )
 
-df_name = os.path.basename(file_path).replace("cleaned_", "").replace(".csv", "") + ".csv"
-
-# Save
-filtered_file_path = os.path.join(FILTERED_FOLDER, f"{folder_name}_filtered.csv")
-df.to_csv(filtered_file_path, index=False)
-
-print(f"Filtered file saved: {filtered_file_path}")
+# Apply filtering logic to keep only matching columns
+# try:
+cf.filter_cols(local=True)
+print("Filtering completed and saved to 'filtered_data' folder.")
+'''
+except Exception as e:
+    print(f"Filtering failed: {e}")
+    sys.exit(1)
+'''

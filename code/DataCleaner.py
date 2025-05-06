@@ -83,21 +83,47 @@ class DataCleaner:
     # Break mixed data
     def break_values(self, breaker:str='name'):
         if breaker == 'name':
-            column_to_break = [col for col in self.df.columns if 'full' in col.lower() and 'name' in col.lower()]
+            column_to_break = [
+                col for col in self.df.columns if 'name' in col.lower() and not (
+                    'first' in col.lower() or 'last' in col.lower() or 'company' in col.lower()
+                )
+            ]
+
             if column_to_break:
                 col_name = column_to_break[0]
-                self.df[['FirstName', 'LastName']] = self.df[col_name].str.split(' ', 1, expand=True)
-                # Drop the original column
+
+                # Known prefixes and suffixes to strip
+                prefixes = {'Mr.', 'Mrs.', 'Ms.', 'Miss', 'Dr.', 'Prof.'}
+                suffixes = {'Jr.', 'Sr.', 'II', 'III', 'PhD', 'M.D.', 'MD', 'DVM'}
+
+                def split_name(full_name:str):
+                    if pd.isna(full_name):
+                        return pd.Series(['', ''])
+                    parts = full_name.strip().split()
+                    # Remove prefixes and suffixes
+                    parts = [p for p in parts if p not in prefixes and p not in suffixes]
+                    if not parts:
+                        return pd.Series(['', ''])
+                    elif len(parts) == 1:
+                        return pd.Series([parts[0], ''])
+                    else:
+                        return pd.Series([parts[0], ' '.join(parts[1:])])
+
+                self.df[['FirstName', 'LastName']] = self.df[col_name].apply(split_name)
                 self.df.drop(columns=[col_name], inplace=True)
             else:
                 pass
 
         elif breaker == 'address':
-            column_to_break = [col for col in self.df.columns if 'address' in col.lower() and 'email' not in col.lower()]
+            column_to_break = [
+                col for col in self.df.columns if 'address' in col.lower() and not (
+                    'mail' in col.lower() or 'street' in col.lower()
+                )
+            ]
             if column_to_break:
                 col_name = column_to_break[0]
                 temp = self.df[col_name].str.slice(0, -9).str.rstrip(',')
-                self.df[['Street', 'City']] = (
+                self.df[['Street Address', 'City']] = (
                     temp.str.rsplit(',', n=1, expand=True)
                     .apply(lambda col: col.str.strip())
                 )

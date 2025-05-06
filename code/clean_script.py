@@ -8,9 +8,12 @@ CLEANED_FOLDER = "cleaned_data"
 os.makedirs(CLEANED_FOLDER, exist_ok=True)
 
 
-def clean_uploaded_file(file_path, cleaned_filename):
+def clean_uploaded_file(file_path:str, cleaned_filename:str, info_break:bool=True)->str:
     # Read file
-    df = pd.read_csv(file_path)
+    if file_path[-3:] == 'csv':
+        df = pd.read_csv(file_path)
+    elif file_path[-4:] == 'xlsx':
+        df = pd.read_excel(file_path, sheet_name='Sheet1')
 
     # Create an instance of the DataCleaner class
     cleaner = DataCleaner(df)
@@ -18,8 +21,9 @@ def clean_uploaded_file(file_path, cleaned_filename):
     # Clean the data
     cleaner.handle_missing_data()
     cleaner.handle_duplicates()
-    cleaner.break_values()
-    cleaner.break_values(breaker='address')
+    if info_break:
+        cleaner.break_values()
+        cleaner.break_values(breaker='address')
 
     # Create file path
     cleaned_path = os.path.join(CLEANED_FOLDER, cleaned_filename)

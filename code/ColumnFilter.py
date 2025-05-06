@@ -6,11 +6,12 @@ class ColumnFilter:
     def __init__(
             self,
             dfs: list[str],
-            target_tables: dict
+            target_tables: dict[str, list[str]]
     ):
         self.df_names = dfs
+        self.__folder_name = dfs[0][:4]
         self.__dfs = {
-            os.path.basename(name).replace("cleaned_", "").replace(".csv", "") + ".csv":
+            os.path.basename(name):
             pd.read_csv(os.path.join("cleaned_data", name))
             for name in dfs
         }
@@ -18,26 +19,78 @@ class ColumnFilter:
         self.__target_tables = target_tables
 
     # Get column name
-    def get_cols(self) -> dict:
-        column_samples = {}
+    def get_cols(self) -> list[tuple[str]]:
+        column_samples = []
         for df_name, df in self.__dfs.items():
-            column_samples[df_name] = df.columns.tolist()
+            col_list = df.columns.tolist()
+            column_samples.extend(zip(col_list, [df_name]*len(col_list)))
         return column_samples
 
     # Find match column
-    def similarity_match(self, colnames: list[str]) -> dict:
-        matched_cols = {}
+    def similarity_match(self, colnames: list[tuple[str]]) -> dict[tuple[str], list[str]]:
+        def __similarity(s1: str, s2: str) -> float:
+            """
+            Strict similarity: only considers the longest consecutive matching substring.
+            Returns a ratio based on the length of the longest common substring 
+            over the average string length.
+            """
+            len1, len2 = len(s1), len(s2)
+            matrix = [[0] * (len2 + 1) for _ in range(len1 + 1)]
+            longest = 0
 
+            for i in range(len1):
+                for j in range(len2):
+                    if s1[i] == s2[j]:
+                        matrix[i+1][j+1] = matrix[i][j] + 1
+                        longest = max(longest, matrix[i+1][j+1])
+
+            avg_len = (len1 + len2) / 2
+            return longest / avg_len if avg_len else 0.0
+
+        matched_cols = {}
+        
         for df, expected_cols in self.__target_tables.items():
             matched = []
+            label = None  # Label the matching table
             for expected_col in expected_cols:
                 found = None
                 for col in colnames:
-                    if expected_col.lower() == col.lower():
-                        found = col
+                    sub_col = col[0].lower().replace('item', 'product')
+                    if expected_col.lower() == sub_col and (not label or col[1]==label):
+                        found = col[0]
                         break
+                if found:
+                    if not label: label = col[1]
+                    matched.append(found if found else f'{expected_col}_null')
+                    continue
+
+                for col in colnames:
+                    sub_col = col[0].lower().replace('item', 'product')
+                    if 'id' in expected_col.lower() and __similarity(
+                        expected_col.lower(), sub_col
+                    ) >= 0.5 and (
+                        'id' in sub_col or 'number' in sub_col
+                    ) and (not label or col[1]==label):
+                        found = col[0]
+                        break
+                if found:
+                    if not label: label = col[1]
+                    matched.append(found if found else f'{expected_col}_null')
+                    continue
+                
+                for col in colnames:
+                    sub_col = col[0].lower().replace('item', 'product')
+                    if (
+                        __similarity(expected_col.lower(), sub_col) >= 0.5 \
+                        or expected_col.lower() in sub_col \
+                        or sub_col in expected_col.lower() \
+                    ) and (not label or col[1]==label):
+                        found = col[0]
+                        break
+                if not label: label = col[1]
                 matched.append(found if found else f'{expected_col}_null')
-            matched_cols[df] = matched
+
+            matched_cols[(df, label)] = matched
 
         return matched_cols
 
@@ -53,15 +106,34 @@ class ColumnFilter:
         result_set = {}
         column_samples = self.get_cols()
 
-        for df_name, col_names in column_samples.items():
-            selected_columns = self.similarity_match(col_names)
-            print("Available keys in self.__dfs:", list(self.__dfs.keys()))
-            print("Requested df_name:", df_name)
-            print(f"Checking df_name existence: '{df_name}' in {list(self.__dfs.keys())}")
-            print(f"df_name exact match: {df_name == list(self.__dfs.keys())[0]}")
-            print(f"df_name repr: {repr(df_name)}")
-            filtered_df = self.__dfs[df_name][[col for col in selected_columns[df_name] if 'null' not in col]]
-            result_set[df_name] = filtered_df
+        selected_columns = self.similarity_match(column_samples)
+        for df_pair, f_col in selected_columns.items():
+            source = self.__dfs[df_pair[1]]
+            this_table = pd.DataFrame()
+            for i, f in enumerate(f_col):
+                if f in source.columns:
+                    new_column = pd.DataFrame({self.__target_tables[df_pair[0]][i]:source[f]})
+                    this_table = pd.concat([this_table, new_column], axis=1)
+                else:
+                    this_table = pd.concat(
+                        [this_table, pd.DataFrame({f[:-5]: [None]*len(source)})], 
+                        axis=1
+                    )
+
+            # Handle missing id
+            if this_table.iloc[0, 0]:
+                # Handle duplications
+                this_table.drop_duplicates(subset=this_table.columns[0], inplace=True)
+            else:
+                # Handle duplications
+                this_table.drop_duplicates(inplace=True)
+
+                this_table.iloc[:, 0] = [
+                    f'{df_pair[0][:3].upper()}{str(i).zfill(5)}' 
+                    for i in range(1, len(this_table) + 1)
+                ]
+
+            result_set[df_pair[0]] = this_table
 
         if local:
             self.__store_tables(result_set)
