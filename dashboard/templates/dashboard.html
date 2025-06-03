@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standard Insights AI-Based Reporting</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Inline CSS to avoid path issues -->
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #F7F7F7;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #A7C7E7;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Menu Navigation */
+        .menu-container {
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 10px;
+            margin: 20px auto;
+            max-width: 1000px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .menu-item:hover {
+            background: #e9f2fa;
+        }
+
+        .menu-item.active {
+            background: #A7C7E7;
+            color: white;
+        }
+
+        /* Section styling */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #444;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #A7C7E7;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Flashcards */
+        .flashcards {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            margin: 10px;
+            color: #444;
+            font-weight: bold;
+            transition: 0.3s ease;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .card p {
+            font-size: 1.8em;
+            margin: 5px 0;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Pastel Colors for Cards */
+        .blue { background: #A7C7E7; color: white; }
+        .pink { background: #F8C8DC; }
+        .green { background: #B5EAD7; }
+        .yellow { background: #FDECB2; }
+
+        /* Highlights Section */
+        .highlights {
+            margin-top: 30px;
+        }
+
+        .highlights h2 {
+            margin-bottom: 20px;
+            color: #444;
+            text-align: center;
+        }
+
+        /* Graph Sections */
+        .graph-section {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+            margin-bottom: 40px;
+            transition: 0.3s;
+        }
+
+        .graph-section:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Graph Box */
+        .graph-box {
+            flex: 2;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        /* Insights */
+        .insights {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .insights h3 {
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .insights p {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .graph-section {
+                flex-direction: column;
+            }
+            
+            .graph-box, .insights {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .flashcards {
+                flex-direction: column;
+            }
+            
+            .menu-container {
+                flex-wrap: wrap;
+            }
+            
+            .menu-item {
+                margin: 5px;
+                width: calc(50% - 10px);
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .menu-item {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <h1>Standard Insights AI-Based Reporting</h1>
+    </nav>
+
+    <!-- Menu Navigation -->
+    <div class="menu-container">
+        <div class="menu-item active" onclick="showSection('summary')">Dashboard Summary</div>
+        <div class="menu-item" onclick="showSection('sales')">Sales Analysis</div>
+        <div class="menu-item" onclick="showSection('products')">Products Analysis</div>
+        <div class="menu-item" onclick="showSection('customers')">Customer Analysis</div>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Summary Section -->
+        <div class="section active" id="summary-section">
+            <h2 class="section-title">Dashboard Summary</h2>
+            <!-- Flashcards Section -->
+            <div class="flashcards">
+                <div class="card blue">
+                    <h3>Total Sales</h3>
+                    <p id="total-sales">$270,866.11</p>
+                </div>
+                <div class="card pink">
+                    <h3>Total Customers</h3>
+                    <p id="total-customers">765</p>
+                </div>
+                <div class="card green">
+                    <h3>Top Product</h3>
+                    <p id="top-product">Product 6</p>
+                </div>
+                <div class="card yellow">
+                    <h3>Top Customer</h3>
+                    <p id="top-customer">ABC Corp</p>
+                </div>
+            </div>
+
+            <!-- Key Highlights -->
+            <div class="highlights">
+                <h2>Key Highlights</h2>
+                <div class="graph-section">
+                    <div class="graph-box">
+                        <canvas id="summary-sales-chart"></canvas>
+                    </div>
+                    <div class="insights">
+                        <h3>📊 Sales Overview</h3>
+                        <p id="monthly_insight_summary">Loading insight...</p>
+                    </div>
+                </div>
+                <div class="graph-section">
+                    <div class="graph-box">
+                        <canvas id="summary-top-products-chart"></canvas>
+                    </div>
+                    <div class="insights">
+                        <h3>🛍️ Product Performance</h3>
+                        <p id="best_selling_insight_two">Loading insight...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- Sales Section -->
+                <div class="section" id="sales-section">
+                    <h2 class="section-title">Sales Analysis</h2>
+
+                    <div class="graph-section">
+                        <div class="graph-box">
+                            <canvas id="monthly-sales-chart"></canvas>
+                        </div>
+                        <div class="insights">
+                            <h3>📈 Monthly Sales Trends</h3>
+                            <p id="monthly_insight">Loading insight...</p>
+                        </div>
+                    </div>
+
+                    <div class="graph-section">
+                        <div class="graph-box">
+                            <canvas id="sales-channel-chart"></canvas>
+                        </div>
+                        <div class="insights">
+                            <h3>🔄 Sales Channel Distribution</h3>
+                            <p id="channel_insight">Loading insight...</p>
+                        </div>
+                    </div>
+
+                    <div class="graph-section">
+                        <div class="graph-box">
+                            <canvas id="top-customers-chart"></canvas>
+                        </div>
+                        <div class="insights">
+                            <h3>👥 Top Customer Analysis</h3>
+                            <p id="customer_insight">Loading insight...</p>
+                        </div>
+                    </div>
+                </div>
+
+        <!-- Products Section -->
+        <div class="section" id="products-section">
+            <h2 class="section-title">Products Analysis</h2>
+            <div class="graph-section">
+                <div class="graph-box">
+                    <canvas id="bestselling-products-chart"></canvas>
+                </div>
+                <div class="insights">
+                    <h3>🔝 Best Selling Products</h3>
+                    <p id="best_selling_insight">Loading insight...</p>
+                </div>
+            </div>
+            <div class="graph-section">
+                <div class="graph-box">
+                    <canvas id="profitable-products-chart"></canvas>
+                </div>
+                <div class="insights">
+                    <h3>💰 Most Profitable Products</h3>
+                    <p id="profitable_insight">Loading insight...</p>
+                </div>
+            </div>
+            <div class="graph-section">
+                <div class="graph-box">
+                    <canvas id="category-sales-chart"></canvas>
+                </div>
+                <div class="insights">
+                    <h3>📊 Sales by Category</h3>
+                    <p id="category_insight">Loading insight...</p>
+                </div>
+            </div>
+        </div>
+
+            <!-- Customers Section -->
+            <div class="section" id="customers-section">
+                <h2 class="section-title">Customer Analysis</h2>
+
+                <div class="graph-section">
+                    <div class="graph-box">
+                        <canvas id="customers-by-state-chart"></canvas>
+                    </div>
+                    <div class="insights">
+                        <h3>🗺️ Geographic Distribution</h3>
+                        <p id="state_insight">Loading insight...</p>
+                    </div>
+                </div>
+
+                <div class="graph-section">
+                    <div class="graph-box">
+                        <canvas id="customers-by-income-chart"></canvas>
+                    </div>
+                    <div class="insights">
+                        <h3>💵 Income Level Analysis</h3>
+                        <p id="income_insight">Loading insight...</p>
+                    </div>
+                </div>
+
+                <div class="graph-section">
+                    <div class="graph-box">
+                        <canvas id="purchase-frequency-chart"></canvas>
+                    </div>
+                    <div class="insights">
+                        <h3>🔄 Purchase Frequency</h3>
+                        <p id="frequency_insight">Loading insight...</p>
+                    </div>
+                </div>
+            </div>
+
+    <footer>
+        <p>&copy; 2025 Standard Insights - Generated on <span id="generation-date"></span></p>
+    </footer>
+
+    <!-- Inline JavaScript to avoid path issues -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Dashboard Loaded");
+            
+            // Set generation date
+            const currentDate = new Date();
+            document.getElementById('generation-date').textContent = currentDate.toLocaleDateString();
+            
+            // Initialize all charts with fallback data
+            initializeCharts();
+        });
+
+        // Function to show section based on menu item clicked
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.add('active');
+            
+            // Update menu item active states
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Set clicked menu item as active
+            event.currentTarget.classList.add('active');
+        }
+
+        // Initialize all charts with fallback data
+        
+
+function initializeCharts() {
+    // Dashboard Summary (uses both sales + product data)
+    Promise.all([
+        fetch('/api/sales').then(res => res.json()),
+        fetch('/api/products').then(res => res.json())
+    ]).then(([salesData, productData]) => {
+        createSummaryCharts(salesData, productData);
+    });
+
+    // Cards summary
+    fetch('/api/dashboard-summary')
+        .then(res => res.json())
+        .then(data => {
+    data.total_sales = Number(data.total_sales).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    data.total_customers = Number(data.total_customers).toLocaleString("en-US");
+            document.getElementById('total-sales').textContent = `$${data.total_sales}`;
+            document.getElementById('total-customers').textContent = data.total_customers;
+            document.getElementById('top-product').textContent = data.top_product;
+            document.getElementById('top-customer').textContent = data.top_customer;
+        });
+
+    // Section-specific charts
+    fetch('/api/sales').then(res => res.json()).then(data => createSalesCharts(data));
+    fetch('/api/products').then(res => res.json()).then(data => createProductCharts(data));
+    fetch('/api/customers').then(res => res.json()).then(data => createCustomerCharts(data));
+}
+
+
+
+        // Create Summary Section Charts
+        function createSummaryCharts(salesData, productData) {
+            // Summary Sales Chart
+            const summaryCtx = document.getElementById('summary-sales-chart').getContext('2d');
+            new Chart(summaryCtx, {
+                type: 'line',
+                data: {
+                    labels: salesData.monthly_labels,
+                    datasets: [{
+                        label: 'Monthly Sales',
+                        data: salesData.monthly_data,
+                        borderColor: '#A7C7E7',
+                        backgroundColor: 'rgba(167, 199, 231, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Sales Trend'
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+            
+            // Summary Products Chart
+            const productsCtx = document.getElementById('summary-top-products-chart').getContext('2d');
+            new Chart(productsCtx, {
+                type: 'bar',
+                data: {
+                    labels: productData.top_product_labels,
+                    datasets: [{
+                        label: 'Units Sold',
+                        data: productData.top_product_data,
+                        backgroundColor: '#F8C8DC'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Top Selling Products'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create Sales Section Charts
+        function createSalesCharts(salesData) {
+            // Monthly Sales Trends
+            const monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
+            new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: salesData.monthly_labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: salesData.monthly_data,
+                        borderColor: '#A7C7E7',
+                        backgroundColor: 'rgba(167, 199, 231, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Sales Trends'
+                        }
+                    }
+                }
+            });
+            
+            // Sales Channel
+            const channelCtx = document.getElementById('sales-channel-chart').getContext('2d');
+            new Chart(channelCtx, {
+                type: 'pie',
+                data: {
+                    labels: salesData.channel_labels,
+                    datasets: [{
+                        data: salesData.channel_data,
+                        backgroundColor: ['#66b3ff', '#ff9999', '#99ff99']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Sales Channel Distribution'
+                        }
+                    }
+                }
+            });
+            
+            // Top Customers
+            const customersCtx = document.getElementById('top-customers-chart').getContext('2d');
+            new Chart(customersCtx, {
+                type: 'bar',
+                data: {
+                    labels: salesData.top_customer_labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: salesData.top_customer_data,
+                        backgroundColor: '#A7C7E7'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Top Customers by Revenue'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create Product Section Charts
+        function createProductCharts(productData) {
+            // Bestselling Products
+            const bestsellingCtx = document.getElementById('bestselling-products-chart').getContext('2d');
+            new Chart(bestsellingCtx, {
+                type: 'bar',
+                data: {
+                    labels: productData.top_product_labels,
+                    datasets: [{
+                        label: 'Units Sold',
+                        data: productData.top_product_data,
+                        backgroundColor: '#F8C8DC'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Best Selling Products'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Most Profitable Products
+            const profitableCtx = document.getElementById('profitable-products-chart').getContext('2d');
+            new Chart(profitableCtx, {
+                type: 'bar',
+                data: {
+                    labels: productData.profitable_labels,
+                    datasets: [{
+                        label: 'Profit',
+                        data: productData.profitable_data,
+                        backgroundColor: '#FDECB2'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Most Profitable Products'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Sales by Category
+            const categoryCtx = document.getElementById('category-sales-chart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: productData.category_labels,
+                    datasets: [{
+                        label: 'Sales Amount',
+                        data: productData.category_data,
+                        backgroundColor: '#B5EAD7'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Sales by Product Category'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Create Customer Section Charts
+        function createCustomerCharts(customerData) {
+            // Customers by State
+            const stateCtx = document.getElementById('customers-by-state-chart').getContext('2d');
+            new Chart(stateCtx, {
+                type: 'bar',
+                data: {
+                    labels: customerData.state_labels,
+                    datasets: [{
+                        label: 'Number of Customers',
+                        data: customerData.state_data,
+                        backgroundColor: '#A7C7E7'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Customers by State'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Customers by Income
+            const incomeCtx = document.getElementById('customers-by-income-chart').getContext('2d');
+            new Chart(incomeCtx, {
+                type: 'bar',
+                data: {
+                    labels: customerData.income_labels,
+                    datasets: [{
+                        label: 'Number of Customers',
+                        data: customerData.income_data,
+                        backgroundColor: '#F8C8DC'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Customers by Income Level'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // Purchase Frequency
+            const frequencyCtx = document.getElementById('purchase-frequency-chart').getContext('2d');
+            new Chart(frequencyCtx, {
+                type: 'bar',
+                data: {
+                    labels: customerData.frequency_labels,
+                    datasets: [{
+                        label: 'Number of Customers',
+                        data: customerData.frequency_data,
+                        backgroundColor: '#B5EAD7'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Purchase Frequency'
+                        },
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+    <!-- Place this right before </body> -->
+    <script>
+        window.onload = function () {
+           //DASHBOARD 
+         fetch('/api/dashboard-summary')
+           .then(res => res.json())
+            .then(data => {
+                document.getElementById('best_selling_insight_two').innerText = data.best_selling_insight || "No insight available.";
+                document.getElementById('monthly_insight_summary').innerText = data.monthly_insight || "No insight available.";
+            })
+            .catch(err => {
+              console.error("🛑 Failed to load product insights:", err);
+              document.getElementById('best_selling_insight_two').innerText = "Error loading insight.";
+              document.getElementById('monthly_insight_summary').innerText = "Error loading insight.";
+            })
+            // PRODUCTS
+          fetch('/api/products')
+            .then(res => res.json())
+            .then(data => {
+              document.getElementById('best_selling_insight').innerText = data.best_selling_insight || "No insight available.";
+              document.getElementById('best_selling_insight_two').innerText = data.best_selling_insight || "No insight available.";
+              document.getElementById('profitable_insight').innerText = data.profitable_insight || "No insight available.";
+              document.getElementById('category_insight').innerText = data.category_insight || "No insight available.";
+            })
+            .catch(err => {
+              console.error("🛑 Failed to load product insights:", err);
+              document.getElementById('best_selling_insight').innerText = "Error loading insight.";
+              document.getElementById('best_selling_insight_two').innerText = "Error loading insight.";
+              document.getElementById('profitable_insight').innerText = "Error loading insight.";
+              document.getElementById('category_insight').innerText = "Error loading insight.";
+            });
+        
+          // SALES
+          fetch('/api/sales')
+            .then(res => res.json())
+            .then(data => {
+              document.getElementById('monthly_insight').innerText = data.monthly_insight || "No insight available.";
+              document.getElementById('monthly_insight_summary').innerText = data.monthly_insight || "No insight available.";
+              document.getElementById('channel_insight').innerText = data.channel_insight || "No insight available.";
+              document.getElementById('customer_insight').innerText = data.customer_insight || "No insight available.";
+            })
+            .catch(err => {
+              console.error("🛑 Failed to load sales insights:", err);
+              document.getElementById('monthly_insight').innerText = "Error loading insight.";
+              document.getElementById('monthly_insight_summary').innerText = "Error loading insight.";
+              document.getElementById('channel_insight').innerText = "Error loading insight.";
+              document.getElementById('customer_insight').innerText = "Error loading insight.";
+            });
+        
+          // CUSTOMERS
+          fetch('/api/customers')
+            .then(res => res.json())
+            .then(data => {
+              document.getElementById('state_insight').innerText = data.state_insight || "No insight available.";
+              document.getElementById('income_insight').innerText = data.income_insight || "No insight available.";
+              document.getElementById('frequency_insight').innerText = data.frequency_insight || "No insight available.";
+            })
+            .catch(err => {
+              console.error("🛑 Failed to load customer insights:", err);
+              document.getElementById('state_insight').innerText = "Error loading insight.";
+              document.getElementById('income_insight').innerText = "Error loading insight.";
+              document.getElementById('frequency_insight').innerText = "Error loading insight.";
+            });
+        };
+        </script>
+</body>
+</html>
