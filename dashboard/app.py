@@ -17,9 +17,9 @@ def format_comma(value):
 CORS(app)
 
 db_config = {
-    "host": "172.233.137.237",
-    "user": "sphartiyal",
-    "password": "Unbr34k@ble#",
+    "host": "#######.237",
+    "user": "Username",
+    "password": "Password",
     "database": "realworlddata"
 }
 
@@ -42,7 +42,7 @@ def generate_insight(section_title: str, data_dict: dict):
 
         # OpenAI Chat API endpoint
         OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
-        OPENAI_API_KEY = "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"  # 🔐 Replace with your actual key
+        OPENAI_API_KEY = "Key"  # 🔐 Replace with your actual key
         headers = {
             "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json"
