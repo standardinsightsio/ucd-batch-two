@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Performance Report</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #2E86C1;
+        }
+        h1 { 
+            color: #2E86C1; 
+            margin: 0;
+            font-size: 28px;
+        }
+        h2 { 
+            color: #2E86C1; 
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .kpi-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .kpi-box {
+            background-color: #f1f8ff;
+            border-left: 4px solid #2E86C1;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: calc(50% - 40px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .kpi-title {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        .kpi-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2E86C1;
+        }
+        .kpi-change {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .positive-change {
+            color: #27AE60;
+        }
+        .negative-change {
+            color: #E74C3C;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        th { 
+            background-color: #f1f8ff;
+            color: #2E86C1;
+            font-weight: bold;
+        }
+        th, td { 
+            padding: 12px; 
+            text-align: left; 
+            border: 1px solid #ddd; 
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .chart-container {
+            margin: 30px 0;
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            background-color: white;
+        }
+        .chart-placeholder {
+            height: 250px;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-style: italic;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Sales Performance Report</h1>
+            <p>Monthly Report - May 2025</p>
+        </div>
+
+        <div class="kpi-container">
+            <div class="kpi-box">
+                <div class="kpi-title">Total Revenue</div>
+                <div class="kpi-value">$183,500</div>
+                <div class="kpi-change positive-change">↑ 12.5% vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Orders</div>
+                <div class="kpi-value">3,245</div>
+                <div class="kpi-change positive-change">↑ 8.7% vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Average Order Value</div>
+                <div class="kpi-value">$56.55</div>
+                <div class="kpi-change positive-change">↑ 3.2% vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Conversion Rate</div>
+                <div class="kpi-value">4.8%</div>
+                <div class="kpi-change positive-change">↑ 0.3% vs previous month</div>
+            </div>
+        </div>
+
+        <h2>Revenue Trends</h2>
+        <div class="chart-container">
+            <div class="chart-placeholder">
+                [Monthly Revenue Chart - Last 6 Months]
+            </div>
+        </div>
+        <p>Sales have shown consistent growth over the last 6 months with a notable uptick in April and May. The increased marketing effort in Q2 has successfully boosted revenue by 15% compared to Q1.</p>
+
+        <h2>Top Selling Categories</h2>
+        <div class="chart-container">
+            <div class="chart-placeholder">
+                [Sales by Category Pie Chart]
+            </div>
+        </div>
+
+        <h2>Top Performing Products</h2>
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Units Sold</th>
+                <th>Revenue</th>
+                <th>Profit Margin</th>
+            </tr>
+            <tr>
+                <td>Premium Smartwatch X10</td>
+                <td>742</td>
+                <td>$74,200</td>
+                <td>42%</td>
+            </tr>
+            <tr>
+                <td>Wireless Earbuds Pro</td>
+                <td>1,205</td>
+                <td>$60,250</td>
+                <td>38%</td>
+            </tr>
+            <tr>
+                <td>Smart Home Hub</td>
+                <td>531</td>
+                <td>$37,170</td>
+                <td>45%</td>
+            </tr>
+            <tr>
+                <td>Ultra Slim Phone Case</td>
+                <td>1,832</td>
+                <td>$27,480</td>
+                <td>65%</td>
+            </tr>
+            <tr>
+                <td>Fast Charging Cable</td>
+                <td>2,156</td>
+                <td>$19,404</td>
+                <td>70%</td>
+            </tr>
+        </table>
+
+        <h2>Regional Performance</h2>
+        <table>
+            <tr>
+                <th>Region</th>
+                <th>Revenue</th>
+                <th>Growth</th>
+                <th>% of Total</th>
+            </tr>
+            <tr>
+                <td>North America</td>
+                <td>$92,500</td>
+                <td class="positive-change">+15.3%</td>
+                <td>50.4%</td>
+            </tr>
+            <tr>
+                <td>Europe</td>
+                <td>$48,250</td>
+                <td class="positive-change">+10.2%</td>
+                <td>26.3%</td>
+            </tr>
+            <tr>
+                <td>Asia-Pacific</td>
+                <td>$32,750</td>
+                <td class="positive-change">+18.7%</td>
+                <td>17.8%</td>
+            </tr>
+            <tr>
+                <td>Rest of World</td>
+                <td>$10,000</td>
+                <td class="negative-change">-2.1%</td>
+                <td>5.5%</td>
+            </tr>
+        </table>
+
+        <h2>Sales Channel Distribution</h2>
+        <table>
+            <tr>
+                <th>Channel</th>
+                <th>Revenue</th>
+                <th>% of Total</th>
+            </tr>
+            <tr>
+                <td>Website</td>
+                <td>$95,420</td>
+                <td>52%</td>
+            </tr>
+            <tr>
+                <td>Mobile App</td>
+                <td>$42,205</td>
+                <td>23%</td>
+            </tr>
+            <tr>
+                <td>Retail Partners</td>
+                <td>$35,783</td>
+                <td>19.5%</td>
+            </tr>
+            <tr>
+                <td>Other</td>
+                <td>$10,092</td>
+                <td>5.5%</td>
+            </tr>
+        </table>
+
+        <div class="footer">
+            <p>Generated on May 6, 2025 | Sales Department</p>
+        </div>
+    </div>
+</body>
+</html>

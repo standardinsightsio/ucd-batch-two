@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Analytics Report</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #28B463;
+        }
+        h1 { 
+            color: #28B463; 
+            margin: 0;
+            font-size: 28px;
+        }
+        h2 { 
+            color: #28B463; 
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .kpi-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .kpi-box {
+            background-color: #f2fff7;
+            border-left: 4px solid #28B463;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: calc(50% - 40px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .kpi-title {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        .kpi-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28B463;
+        }
+        .kpi-change {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .positive-change {
+            color: #27AE60;
+        }
+        .negative-change {
+            color: #E74C3C;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        th { 
+            background-color: #f2fff7;
+            color: #28B463;
+            font-weight: bold;
+        }
+        th, td { 
+            padding: 12px; 
+            text-align: left; 
+            border: 1px solid #ddd; 
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .chart-container {
+            margin: 30px 0;
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            background-color: white;
+        }
+        .chart-placeholder {
+            height: 250px;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-style: italic;
+        }
+        .progress-container {
+            background-color: #f2f2f2;
+            border-radius: 13px;
+            height: 20px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 20px;
+            border-radius: 13px;
+            background-color: #28B463;
+        }
+        .metric-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👥 Customer Analytics Report</h1>
+            <p>Monthly Report - May 2025</p>
+        </div>
+
+        <div class="kpi-container">
+            <div class="kpi-box">
+                <div class="kpi-title">Total Customers</div>
+                <div class="kpi-value">5,782</div>
+                <div class="kpi-change positive-change">↑ 6.2% vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">New Customers</div>
+                <div class="kpi-value">427</div>
+                <div class="kpi-change positive-change">↑ 12.4% vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Customer Retention Rate</div>
+                <div class="kpi-value">84.5%</div>
+                <div class="kpi-change positive-change">↑ 1.2% vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Churn Rate</div>
+                <div class="kpi-value">3.2%</div>
+                <div class="kpi-change positive-change">↓ 0.3% vs previous month</div>
+            </div>
+        </div>
+
+        <h2>Customer Satisfaction</h2>
+        <div class="metric-card">
+            <div class="kpi-title">Overall Satisfaction Score</div>
+            <div class="kpi-value">92%</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 92%"></div>
+            </div>
+        </div>
+        
+        <div class="metric-card">
+            <div class="kpi-title">Net Promoter Score (NPS)</div>
+            <div class="kpi-value">64</div>
+            <div class="kpi-change positive-change">↑ 3 points vs previous quarter</div>
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    [NPS Trend Chart - Last 12 Months]
+                </div>
+            </div>
+        </div>
+
+        <h2>Customer Demographics</h2>
+        <div class="chart-container">
+            <div class="chart-placeholder">
+                [Age Distribution Chart]
+            </div>
+        </div>
+
+        <h2>Geographic Distribution</h2>
+        <table>
+            <tr>
+                <th>Region</th>
+                <th>Customers</th>
+                <th>% of Total</th>
+                <th>Growth</th>
+            </tr>
+            <tr>
+                <td>North America</td>
+                <td>2,312</td>
+                <td>40.0%</td>
+                <td class="positive-change">+5.8%</td>
+            </tr>
+            <tr>
+                <td>Europe</td>
+                <td>1,735</td>
+                <td>30.0%</td>
+                <td class="positive-change">+7.2%</td>
+            </tr>
+            <tr>
+                <td>Asia-Pacific</td>
+                <td>1,272</td>
+                <td>22.0%</td>
+                <td class="positive-change">+10.5%</td>
+            </tr>
+            <tr>
+                <td>Rest of World</td>
+                <td>463</td>
+                <td>8.0%</td>
+                <td class="negative-change">-1.2%</td>
+            </tr>
+        </table>
+
+        <h2>Customer Lifetime Value</h2>
+        <table>
+            <tr>
+                <th>Segment</th>
+                <th>Avg. CLV</th>
+                <th>% Change</th>
+            </tr>
+            <tr>
+                <td>Premium</td>
+                <td>$1,250</td>
+                <td class="positive-change">+3.5%</td>
+            </tr>
+            <tr>
+                <td>Standard</td>
+                <td>$650</td>
+                <td class="positive-change">+1.8%</td>
+            </tr>
+            <tr>
+                <td>Basic</td>
+                <td>$320</td>
+                <td class="negative-change">-0.5%</td>
+            </tr>
+        </table>
+
+        <h2>Customer Engagement</h2>
+        <div class="kpi-container">
+            <div class="kpi-box">
+                <div class="kpi-title">Average Purchase Frequency</div>
+                <div class="kpi-value">2.4 months</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Email Open Rate</div>
+                <div class="kpi-value">28.5%</div>
+                <div class="kpi-change positive-change">↑ 1.3% vs previous month</div>
+            </div>
+        </div>
+
+        <h2>Support Performance</h2>
+        <table>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+                <th>Target</th>
+            </tr>
+            <tr>
+                <td>First Response Time</td>
+                <td>1.8 hours</td>
+                <td>< 2 hours</td>
+            </tr>
+            <tr>
+                <td>Resolution Time</td>
+                <td>7.2 hours</td>
+                <td>< 8 hours</td>
+            </tr>
+            <tr>
+                <td>Support Satisfaction</td>
+                <td>94%</td>
+                <td>> 90%</td>
+            </tr>
+        </table>
+
+        <div class="footer">
+            <p>Generated on May 6, 2025 | Customer Success Department</p>
+        </div>
+    </div>
+</body>
+</html>

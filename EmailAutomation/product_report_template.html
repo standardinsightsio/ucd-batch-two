@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Product Performance Report</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #CA6F1E;
+        }
+        h1 { 
+            color: #CA6F1E; 
+            margin: 0;
+            font-size: 28px;
+        }
+        h2 { 
+            color: #CA6F1E; 
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .kpi-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .kpi-box {
+            background-color: #fff8f0;
+            border-left: 4px solid #CA6F1E;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: calc(50% - 40px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .kpi-title {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        .kpi-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #CA6F1E;
+        }
+        .kpi-change {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .positive-change {
+            color: #27AE60;
+        }
+        .negative-change {
+            color: #E74C3C;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        th { 
+            background-color: #fff8f0;
+            color: #CA6F1E;
+            font-weight: bold;
+        }
+        th, td { 
+            padding: 12px; 
+            text-align: left; 
+            border: 1px solid #ddd; 
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .star-rating {
+            color: #F1C40F;
+            font-size: 18px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-in-stock {
+            background-color: #D5F5E3;
+            color: #27AE60;
+        }
+        .status-low {
+            background-color: #FDEBD0;
+            color: #F39C12;
+        }
+        .status-out {
+            background-color: #FADBD8;
+            color: #E74C3C;
+        }
+        .chart-container {
+            margin: 30px 0;
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+            background-color: white;
+        }
+        .chart-placeholder {
+            height: 250px;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-style: italic;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Product Performance Report</h1>
+            <p>Monthly Report - May 2025</p>
+        </div>
+
+        <div class="kpi-container">
+            <div class="kpi-box">
+                <div class="kpi-title">Total Active Products</div>
+                <div class="kpi-value">172</div>
+                <div class="kpi-change positive-change">↑ 12 new products this month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Average Product Rating</div>
+                <div class="kpi-value">4.6 <span class="star-rating">★</span></div>
+                <div class="kpi-change positive-change">↑ 0.2 vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Inventory Turnover</div>
+                <div class="kpi-value">5.8</div>
+                <div class="kpi-change positive-change">↑ 0.4 vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Out-of-Stock Rate</div>
+                <div class="kpi-value">1.8%</div>
+                <div class="kpi-change positive-change">↓ 0.3% vs previous month</div>
+            </div>
+        </div>
+
+        <h2>Product Performance Overview</h2>
+        <div class="chart-container">
+            <div class="chart-placeholder">
+                [Product Sales Distribution Chart]
+            </div>
+        </div>
+
+        <h2>Top Performing Products</h2>
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Sales</th>
+                <th>Rating</th>
+                <th>Stock Status</th>
+            </tr>
+            <tr>
+                <td>Premium Smartwatch X10</td>
+                <td>Wearables</td>
+                <td>742</td>
+                <td>4.8 <span class="star-rating">★</span></td>
+                <td><span class="status status-in-stock">In Stock</span></td>
+            </tr>
+            <tr>
+                <td>Wireless Earbuds Pro</td>
+                <td>Audio</td>
+                <td>1,205</td>
+                <td>4.7 <span class="star-rating">★</span></td>
+                <td><span class="status status-in-stock">In Stock</span></td>
+            </tr>
+            <tr>
+                <td>Smart Home Hub</td>
+                <td>Smart Home</td>
+                <td>531</td>
+                <td>4.5 <span class="star-rating">★</span></td>
+                <td><span class="status status-low">Low Stock</span></td>
+            </tr>
+            <tr>
+                <td>Ultra Slim Phone Case</td>
+                <td>Accessories</td>
+                <td>1,832</td>
+                <td>4.6 <span class="star-rating">★</span></td>
+                <td><span class="status status-in-stock">In Stock</span></td>
+            </tr>
+            <tr>
+                <td>Fast Charging Cable</td>
+                <td>Accessories</td>
+                <td>2,156</td>
+                <td>4.4 <span class="star-rating">★</span></td>
+                <td><span class="status status-in-stock">In Stock</span></td>
+            </tr>
+        </table>
+
+        <h2>Underperforming Products</h2>
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Sales</th>
+                <th>Rating</th>
+                <th>Stock Status</th>
+            </tr>
+            <tr>
+                <td>Basic Digital Camera</td>
+                <td>Photography</td>
+                <td>45</td>
+                <td>3.2 <span class="star-rating">★</span></td>
+                <td><span class="status status-in-stock">In Stock</span></td>
+            </tr>
+            <tr>
+                <td>Desk Lamp Classic</td>
+                <td>Home Office</td>
+                <td>67</td>
+                <td>3.5 <span class="star-rating">★</span></td>
+                <td><span class="status status-in-stock">In Stock</span></td>
+            </tr>
+            <tr>
+                <td>Mechanical Keyboard Basic</td>
+                <td>Computer Accessories</td>
+                <td>58</td>
+                <td>3.4 <span class="star-rating">★</span></td>
+                <td><span class="status status-out">Out of Stock</span></td>
+            </tr>
+        </table>
+
+        <h2>Inventory Status</h2>
+        <div class="chart-container">
+            <div class="chart-placeholder">
+                [Inventory Status by Category Chart]
+            </div>
+        </div>
+
+        <h2>Category Performance</h2>
+        <table>
+            <tr>
+                <th>Category</th>
+                <th>Products</th>
+                <th>Total Sales</th>
+                <th>Avg. Rating</th>
+                <th>Growth</th>
+            </tr>
+            <tr>
+                <td>Wearables</td>
+                <td>28</td>
+                <td>1,540</td>
+                <td>4.6 <span class="star-rating">★</span></td>
+                <td class="positive-change">+12.5%</td>
+            </tr>
+            <tr>
+                <td>Audio</td>
+                <td>35</td>
+                <td>2,872</td>
+                <td>4.5 <span class="star-rating">★</span></td>
+                <td class="positive-change">+8.3%</td>
+            </tr>
+            <tr>
+                <td>Smart Home</td>
+                <td>42</td>
+                <td>1,235</td>
+                <td>4.3 <span class="star-rating">★</span></td>
+                <td class="positive-change">+15.7%</td>
+            </tr>
+            <tr>
+                <td>Accessories</td>
+                <td>56</td>
+                <td>5,280</td>
+                <td>4.4 <span class="star-rating">★</span></td>
+                <td class="positive-change">+5.2%</td>
+            </tr>
+            <tr>
+                <td>Photography</td>
+                <td>11</td>
+                <td>325</td>
+                <td>3.8 <span class="star-rating">★</span></td>
+                <td class="negative-change">-2.1%</td>
+            </tr>
+        </table>
+
+        <h2>Product Launch Performance</h2>
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Launch Date</th>
+                <th>30-day Sales</th>
+                <th>Rating</th>
+            </tr>
+            <tr>
+                <td>Smart Speaker Mini</td>
+                <td>Apr 10, 2025</td>
+                <td>428</td>
+                <td>4.5 <span class="star-rating">★</span></td>
+            </tr>
+            <tr>
+                <td>Fitness Tracker Pro</td>
+                <td>Apr 18, 2025</td>
+                <td>356</td>
+                <td>4.6 <span class="star-rating">★</span></td>
+            </tr>
+            <tr>
+                <td>Wireless Mouse Elite</td>
+                <td>May 1, 2025</td>
+                <td>183</td>
+                <td>4.7 <span class="star-rating">★</span></td>
+            </tr>
+        </table>
+
+        <h2>Returns Analysis</h2>
+        <div class="kpi-container">
+            <div class="kpi-box">
+                <div class="kpi-title">Return Rate</div>
+                <div class="kpi-value">2.3%</div>
+                <div class="kpi-change positive-change">↓ 0.4% vs previous month</div>
+            </div>
+            <div class="kpi-box">
+                <div class="kpi-title">Top Return Reason</div>
+                <div class="kpi-value">Size/Fit Issues</div>
+                <div class="kpi-change">42% of returns</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Generated on May 6, 2025 | Product Management Department</p>
+        </div>
+    </div>
+</body>
+</html>
