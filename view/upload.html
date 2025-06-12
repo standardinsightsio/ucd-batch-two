@@ -1,0 +1,74 @@
+<!-- Moved from ucd-batch-two-dev/upload.html as part of MVC restructuring -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #236B8E;
+            font-family: Arial, sans-serif;
+        }
+
+        .upload-button {
+            background-color: white;
+            color: #000;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: 2px solid #000;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            font-size: 16px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <form id="uploadForm" action="http://127.0.0.1:5000/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" id="file" style="display: none;" required>
+            <input type="hidden" name="upload_type" value="master">
+            <label for="file" class="upload-button">Upload data</label>
+        </form>
+        <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <script>
+        document.getElementById('file').addEventListener('change', function () {
+            // Show "Uploading..." message
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = "Uploading...";
+
+            // Create a new FormData object for the file upload
+            const formData = new FormData(document.getElementById('uploadForm'));
+
+            // Send the POST request via Fetch API
+            fetch("http://127.0.0.1:5000/upload", {
+                method: "POST",
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Show "Uploaded" message when done
+                    statusMessage.textContent = "Uploaded successfully!";
+                })
+                .catch(error => {
+                    // Show error message if the upload fails
+                    statusMessage.textContent = "Upload failed. Please try again.";
+                    console.error("Error:", error);
+                });
+        });
+    </script>
+</body>
+</html>
+

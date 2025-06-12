@@ -1,0 +1,271 @@
+<!-- Moved from EmailAutomation/config.html as part of MVC restructuring -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Business Report Email Sender</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            max-width: 700px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #2E86C1;
+            margin-top: 0;
+        }
+        .subheader {
+            color: #777;
+            font-size: 16px;
+            margin-top: -10px;
+        }
+        .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #2E86C1;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            color: #555;
+        }
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        button {
+            background-color: #2E86C1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 48%;
+        }
+        button[type="submit"] {
+            background-color: #2E86C1;
+        }
+        button[type="button"] {
+            background-color: #27AE60;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .note {
+            font-size: 13px;
+            color: #777;
+            margin-top: 4px;
+            display: block;
+        }
+        .security-note {
+            background-color: #FEF9E7;
+            border-left: 4px solid #F1C40F;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .report-option {
+            display: flex;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .report-option:hover {
+            background-color: #f9f9f9;
+        }
+        .report-option.selected {
+            background-color: #EBF5FB;
+            border-color: #2E86C1;
+        }
+        .report-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 30px;
+            text-align: center;
+        }
+        .report-details {
+            flex: 1;
+        }
+        .report-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .report-description {
+            font-size: 13px;
+            color: #777;
+        }
+        input[type="radio"] {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Business Report Email Sender</h2>
+            <p class="subheader">Create and send professional business reports in seconds</p>
+        </div>
+
+        <form action="/preview" method="post">
+            <div class="form-section">
+                <div class="section-title">1. Email Configuration</div>
+
+                <label for="sender_email">Sender Email:</label>
+                <input type="email" id="sender_email" name="sender_email" required placeholder="your.email@gmail.com">
+
+                <label for="sender_password">App Password:</label>
+                <input type="password" id="sender_password" name="sender_password" required placeholder="Your Gmail app password">
+                <small class="note">We recommend using Google's App Password instead of your main account password</small>
+                <div class="security-note">
+                    <strong>Security Note:</strong> Your credentials are only used to send the email and are not stored on our servers.
+                </div>
+
+                <label for="receiver_email">Recipient Emails:</label>
+                <input type="text" id="receiver_email" name="receiver_email" required placeholder="recipient1@example.com, recipient2@example.com">
+                <small class="note">Enter multiple emails separated by commas</small>
+
+                <label>Schedule Mode:</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <label style="font-weight: normal;">
+                        <input type="radio" name="send_mode" value="fixed" checked onclick="toggleScheduleMode('fixed')">
+                        Fixed (every day)
+                    </label>
+                    <label style="font-weight: normal;">
+                        <input type="radio" name="send_mode" value="custom" onclick="toggleScheduleMode('custom')">
+                        Custom Dates
+                    </label>
+                </div>
+
+                <label for="send_time">Send Time (HH:MM, 24-hour):</label>
+                <input type="text" id="send_time" name="send_time" placeholder="08:00">
+                <small class="note">Use format like "08:00" for 8 AM</small>
+
+                <div id="customDatesSection" style="display: none;">
+                    <label for="send_dates">Select Dates (YYYY-MM-DD, comma separated):</label>
+                    <input type="text" id="send_dates" name="send_dates" placeholder="2025-05-21, 2025-05-22">
+                    <small class="note">Choose one or more future dates for delivery</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">2. Select Report Type</div>
+
+                <input type="radio" id="sales" name="report_type" value="sales" checked>
+                <label for="sales" class="report-option selected" onclick="selectReport(this, 'sales')">
+                    <div class="report-icon">📈</div>
+                    <div class="report-details">
+                        <div class="report-title">Sales Performance Report</div>
+                        <div class="report-description">Revenue metrics, sales trends, top products, and regional performance</div>
+                    </div>
+                </label>
+
+                <input type="radio" id="customer" name="report_type" value="customer">
+                <label for="customer" class="report-option" onclick="selectReport(this, 'customer')">
+                    <div class="report-icon">👥</div>
+                    <div class="report-details">
+                        <div class="report-title">Customer Analytics Report</div>
+                        <div class="report-description">Customer growth, satisfaction metrics, geographic distribution, and engagement stats</div>
+                    </div>
+                </label>
+
+                <input type="radio" id="product" name="report_type" value="product">
+                <label for="product" class="report-option" onclick="selectReport(this, 'product')">
+                    <div class="report-icon">📦</div>
+                    <div class="report-details">
+                        <div class="report-title">Product Performance Report</div>
+                        <div class="report-description">Product metrics, inventory status, top performers, and category analysis</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">3. Customize Message</div>
+                <label for="custom_message">Additional Message (optional):</label>
+                <textarea id="custom_message" name="custom_message" placeholder="Enter any custom message to include with the report..."></textarea>
+                <small class="note">This message will appear at the top of the email</small>
+            </div>
+
+            <div class="buttons">
+                <button type="button" onclick="clearForm()">Clear Form</button>
+                <button type="submit">Preview Report</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function selectReport(element, reportType) {
+            const options = document.querySelectorAll('.report-option');
+            options.forEach(option => option.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById(reportType).checked = true;
+        }
+
+        function toggleScheduleMode(mode) {
+            const section = document.getElementById("customDatesSection");
+            section.style.display = (mode === "custom") ? "block" : "none";
+        }
+
+        function clearForm() {
+            document.getElementById('sender_email').value = '';
+            document.getElementById('sender_password').value = '';
+            document.getElementById('receiver_email').value = '';
+            document.getElementById('custom_message').value = '';
+            document.getElementById('send_time').value = '';
+            document.getElementById('send_dates').value = '';
+            document.getElementById('fixed').checked = true;
+            toggleScheduleMode('fixed');
+            const salesOption = document.querySelector('label[for="sales"]');
+            selectReport(salesOption, 'sales');
+        }
+    </script>
+</body>
+</html>
